@@ -1,0 +1,45 @@
+name: satellite
+
+services:
+
+    satellite_app:
+        build: ./app
+        image: satellite_app
+        container_name: satellite_app
+        hostname: satellite_app
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 5473:5473
+        networks:
+            - backend_network
+        depends_on:
+            satellite_db:
+                condition: service_healthy
+
+    satellite_db:
+        build: ./database
+        image: satellite_db
+        container_name: satellite_db
+        hostname: satellite_db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 5432:5432
+        networks:
+            - backend_network
+        env_file:
+            - path: ./database/.env
+              required: true
+        volumes:
+            - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./database/postgres/data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+
+networks:
+    backend_network:
+        driver: bridge
