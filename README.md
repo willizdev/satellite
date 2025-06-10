@@ -2,7 +2,7 @@
 
 _Satellite helps you launch your projects and ideas into orbit, organizing them visually with constellations and detailed missions._
 
-<img src="./assets/satellite.svg" width="120" height="120">
+<img src="app/public/satellite.svg" width="120" height="120">
 
 ## License
 
