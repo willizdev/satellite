@@ -1,9 +1,10 @@
 FROM oven/bun:alpine
 
-WORKDIR /root/wmarket/web
+WORKDIR /root/satellite/app
 COPY . .
 
 RUN bun install
 RUN bun run build
+RUN chmod +x ./entrypoint.sh
 
-CMD ["bun", "run", "start"]
+CMD ["./entrypoint.sh"]

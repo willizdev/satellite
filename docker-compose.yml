@@ -13,6 +13,9 @@ services:
             - 5473:5473
         networks:
             - backend_network
+        env_file:
+            - path: ./app/.env
+              required: true
         depends_on:
             satellite_db:
                 condition: service_healthy
