@@ -28,8 +28,6 @@ body {
 }
 
 * {
-    margin: 0px;
-    padding: 0px;
     outline: none;
     list-style: none;
     text-decoration: none;
