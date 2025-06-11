@@ -36,10 +36,12 @@ CREATE TABLE "lists" (
 CREATE TABLE "users" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"hash" text NOT NULL,
+	"token" text NOT NULL,
 	"name" text NOT NULL,
 	"bio" text DEFAULT '' NOT NULL,
 	"email" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "users_token_unique" UNIQUE("token"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

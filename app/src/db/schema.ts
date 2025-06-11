@@ -16,6 +16,7 @@ export const activityActionEnum = pgEnum("activity_action", ["create", "update",
 export const users = pgTable("users", {
     id: serial("id").primaryKey(),
     hash: text("hash").notNull(),
+    token: text("token").unique().notNull(),
     name: text("name").notNull(),
     bio: text("bio").notNull().default(""),
     email: text("email").unique().notNull(),

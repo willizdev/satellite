@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
-import { TRPCProvider } from "../components/trpc-provider";
+import { TRPCProvider } from "../components/trpcProvider";
 import "@/styles/globals.css";
 
 const openSans = Open_Sans({
