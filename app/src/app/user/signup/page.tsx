@@ -198,8 +198,11 @@ export default function Signup() {
                             <input
                                 ref={nameRef}
                                 type="text"
-                                autoFocus={focus === "name"}
+                                autoFocus={true}
                                 className="h-12 w-full px-4 border-2 border-[#222] focus:border-[#2C97FF] transition duration-300 rounded-lg shadow-lg"
+                                onFocus={() => {
+                                    setFocus("name");
+                                }}
                             />
                         </div>
                         <div>
@@ -209,8 +212,10 @@ export default function Signup() {
                             <input
                                 ref={emailRef}
                                 type="text"
-                                autoFocus={focus === "email"}
                                 className="h-12 w-full px-4 border-2 border-[#222] focus:border-[#2C97FF] transition duration-300 rounded-lg shadow-lg"
+                                onFocus={() => {
+                                    setFocus("email");
+                                }}
                             />
                         </div>
                         <div>
@@ -221,8 +226,10 @@ export default function Signup() {
                                 <input
                                     ref={passwordRef}
                                     type={showPassword ? "text" : "password"}
-                                    autoFocus={focus === "password"}
                                     className="h-12 w-full pr-12 pl-4 border-2 border-[#222] focus:border-[#2C97FF] transition duration-300 rounded-lg shadow-lg"
+                                    onFocus={() => {
+                                        setFocus("password");
+                                    }}
                                 />
                                 <div
                                     className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#222] cursor-pointer"
@@ -242,8 +249,10 @@ export default function Signup() {
                                 <input
                                     ref={confirmPasswordRef}
                                     type={showConfirmPassword ? "text" : "password"}
-                                    autoFocus={focus === "confirmPassword"}
                                     className="h-12 w-full pr-12 pl-4 border-2 border-[#222] focus:border-[#2C97FF] transition duration-300 rounded-lg shadow-lg"
+                                    onFocus={() => {
+                                        setFocus("confirmPassword");
+                                    }}
                                 />
                                 <div
                                     className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#222] cursor-pointer"

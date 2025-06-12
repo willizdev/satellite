@@ -130,8 +130,11 @@ export default function Signin() {
                             <input
                                 ref={emailRef}
                                 type="text"
-                                autoFocus={focus === "email"}
+                                autoFocus={true}
                                 className="h-12 w-full px-4 border-2 border-[#222] focus:border-[#2C97FF] transition duration-300 rounded-lg shadow-lg"
+                                onFocus={() => {
+                                    setFocus("email");
+                                }}
                             />
                         </div>
                         <div>
@@ -142,8 +145,10 @@ export default function Signin() {
                                 <input
                                     ref={passwordRef}
                                     type={showPassword ? "text" : "password"}
-                                    autoFocus={focus === "password"}
                                     className="h-12 w-full pr-12 pl-4 border-2 border-[#222] focus:border-[#2C97FF] transition duration-300 rounded-lg shadow-lg"
+                                    onFocus={() => {
+                                        setFocus("password");
+                                    }}
                                 />
                                 <div
                                     className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#222] cursor-pointer"
