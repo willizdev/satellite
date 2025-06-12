@@ -1,10 +1,12 @@
+import { ToastProvider } from "@/components/toastProvider";
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Fredoka } from "next/font/google";
 import { TRPCProvider } from "../components/trpcProvider";
 import "@/styles/globals.css";
+import "@/styles/animations.css";
 
-const openSans = Open_Sans({
-    variable: "--font-open-sans",
+const fredoka = Fredoka({
+    variable: "--font-fredoka",
     subsets: ["latin"]
 });
 
@@ -21,8 +23,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${openSans.variable} antialiased`}>
-                <TRPCProvider>{children}</TRPCProvider>
+            <body className={`${fredoka.variable} antialiased`}>
+                <TRPCProvider>
+                    <ToastProvider>{children}</ToastProvider>
+                </TRPCProvider>
             </body>
         </html>
     );

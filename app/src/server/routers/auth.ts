@@ -19,7 +19,11 @@ export const authRouter = router({
                 password: z.string().min(8).max(64)
             })
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
+            if (process.env.ALLOW_SIGNUP !== "true") {
+                throw new Error("Signup is not allowed");
+            }
+
             const existing = await db.query.users.findFirst({
                 where: eq(users.email, input.email)
             });
@@ -37,25 +41,35 @@ export const authRouter = router({
                 email: input.email
             });
 
-            return { token };
+            ctx.cookieStore.set("token", token, {
+                httpOnly: true,
+                maxAge: 3600 * 24
+            });
         }),
 
-    login: publicProcedure
+    signin: publicProcedure
         .input(
             z.object({
                 email: z.string(),
                 password: z.string()
             })
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
             const user = await db.query.users.findFirst({
                 where: eq(users.email, input.email)
             });
-            if (!user) throw new Error("User not found");
+            if (!user) throw new Error("Invalid credentials");
 
             const valid = await bcrypt.compare(input.password, user.hash);
             if (!valid) throw new Error("Invalid credentials");
 
-            return { token: user.token };
-        })
+            ctx.cookieStore.set("token", user.token, {
+                httpOnly: true,
+                maxAge: 3600 * 24
+            });
+        }),
+
+    signout: publicProcedure.mutation(async ({ ctx }) => {
+        ctx.cookieStore.delete("token");
+    })
 });

@@ -1,8 +1,10 @@
-export async function createContext({ req }: { req: Request }) {
-    const authHeader = req.headers.get("authorization");
-    const token = authHeader?.replace("Bearer ", "") ?? null;
+import { cookies } from "next/headers";
 
-    return { token };
+export async function createContext(p0: { req: Request }) {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value ?? null;
+
+    return { cookieStore, token };
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
