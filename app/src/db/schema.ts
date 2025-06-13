@@ -25,7 +25,8 @@ export const users = pgTable("users", {
 
 export const workspaces = pgTable("workspaces", {
     id: serial("id").primaryKey(),
-    name: text("name").notNull()
+    name: text("name").notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull()
 });
 
 export const workspaceMembers = pgTable(
@@ -33,10 +34,10 @@ export const workspaceMembers = pgTable(
     {
         userId: integer("user_id")
             .notNull()
-            .references(() => users.id),
+            .references(() => users.id, { onDelete: "cascade" }),
         workspaceId: integer("workspace_id")
             .notNull()
-            .references(() => workspaces.id),
+            .references(() => workspaces.id, { onDelete: "cascade" }),
         role: roleEnum("role").notNull()
     },
     (table) => [primaryKey({ columns: [table.userId, table.workspaceId] })]
@@ -48,7 +49,7 @@ export const boards = pgTable("boards", {
     backgroundId: integer("background_id").notNull(),
     workspaceId: integer("workspace_id")
         .notNull()
-        .references(() => workspaces.id)
+        .references(() => workspaces.id, { onDelete: "cascade" })
 });
 
 export const lists = pgTable("lists", {
@@ -57,7 +58,7 @@ export const lists = pgTable("lists", {
     order: integer("order").notNull(),
     boardId: integer("board_id")
         .notNull()
-        .references(() => boards.id)
+        .references(() => boards.id, { onDelete: "cascade" })
 });
 
 export const cards = pgTable("cards", {
@@ -67,7 +68,7 @@ export const cards = pgTable("cards", {
     done: boolean("done").default(false).notNull(),
     listId: integer("list_id")
         .notNull()
-        .references(() => lists.id)
+        .references(() => lists.id, { onDelete: "cascade" })
 });
 
 export const activities = pgTable("activities", {
@@ -75,10 +76,10 @@ export const activities = pgTable("activities", {
     time: timestamp("time").defaultNow().notNull(),
     workspaceId: integer("workspace_id")
         .notNull()
-        .references(() => workspaces.id),
+        .references(() => workspaces.id, { onDelete: "cascade" }),
     userId: integer("user_id")
         .notNull()
-        .references(() => users.id),
+        .references(() => users.id, { onDelete: "cascade" }),
     entityName: text("entity_name").notNull(),
     entityType: activityEntityEnum("entity_type").notNull(),
     action: activityActionEnum("action").notNull()

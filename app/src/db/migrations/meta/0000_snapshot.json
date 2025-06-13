@@ -1,5 +1,5 @@
 {
-    "id": "4afc0a51-5c24-4b49-8771-44f7f4fabbab",
+    "id": "27e998cc-aa82-4eb0-994a-e409869a8fac",
     "prevId": "00000000-0000-0000-0000-000000000000",
     "version": "7",
     "dialect": "postgresql",
@@ -62,7 +62,7 @@
                     "tableTo": "workspaces",
                     "columnsFrom": ["workspace_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 },
                 "activities_user_id_users_id_fk": {
@@ -71,7 +71,7 @@
                     "tableTo": "users",
                     "columnsFrom": ["user_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 }
             },
@@ -118,7 +118,7 @@
                     "tableTo": "workspaces",
                     "columnsFrom": ["workspace_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 }
             },
@@ -172,7 +172,7 @@
                     "tableTo": "lists",
                     "columnsFrom": ["list_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 }
             },
@@ -219,7 +219,7 @@
                     "tableTo": "boards",
                     "columnsFrom": ["board_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 }
             },
@@ -329,7 +329,7 @@
                     "tableTo": "users",
                     "columnsFrom": ["user_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 },
                 "workspace_members_workspace_id_workspaces_id_fk": {
@@ -338,7 +338,7 @@
                     "tableTo": "workspaces",
                     "columnsFrom": ["workspace_id"],
                     "columnsTo": ["id"],
-                    "onDelete": "no action",
+                    "onDelete": "cascade",
                     "onUpdate": "no action"
                 }
             },
@@ -368,6 +368,13 @@
                     "type": "text",
                     "primaryKey": false,
                     "notNull": true
+                },
+                "updated_at": {
+                    "name": "updated_at",
+                    "type": "timestamp",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "now()"
                 }
             },
             "indexes": {},
