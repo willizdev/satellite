@@ -1,9 +1,6 @@
-import { randomBytes } from "node:crypto";
-import { db } from "@/db";
-import { users } from "@/db/schema";
 import bcrypt from "bcrypt";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { AuthLib } from "@/lib/auth";
 import { publicProcedure, router } from "../trpc";
 
 export const authRouter = router({
@@ -24,22 +21,12 @@ export const authRouter = router({
                 throw new Error("Signup is not allowed");
             }
 
-            const existing = await db.query.users.findFirst({
-                where: eq(users.email, input.email)
-            });
-            if (existing) throw new Error("User already exists");
+            const user = await AuthLib.userByEmail(input.email);
+            if (!user) {
+                throw new Error("User already exists");
+            }
 
-            const saltRounds = 10;
-            const salt = await bcrypt.genSalt(saltRounds);
-            const hash = await bcrypt.hash(input.password, salt);
-            const token = randomBytes(32).toString("hex");
-
-            await db.insert(users).values({
-                hash: hash,
-                token: token,
-                name: input.name,
-                email: input.email
-            });
+            const token = await AuthLib.userCreate(input.name, input.email, input.password);
 
             ctx.cookieStore.set("token", token, {
                 httpOnly: true,
@@ -55,13 +42,15 @@ export const authRouter = router({
             })
         )
         .mutation(async ({ input, ctx }) => {
-            const user = await db.query.users.findFirst({
-                where: eq(users.email, input.email)
-            });
-            if (!user) throw new Error("Invalid credentials");
+            const user = await AuthLib.userByEmail(input.email);
+            if (!user) {
+                throw new Error("Invalid credentials");
+            }
 
             const valid = await bcrypt.compare(input.password, user.hash);
-            if (!valid) throw new Error("Invalid credentials");
+            if (!valid) {
+                throw new Error("Invalid credentials");
+            }
 
             ctx.cookieStore.set("token", user.token, {
                 httpOnly: true,
