@@ -89,14 +89,5 @@ export const WorkspaceLib = {
             .from(workspaceMembers)
             .innerJoin(workspaces, eq(workspaceMembers.workspaceId, workspaces.id))
             .where(eq(workspaceMembers.userId, userId));
-    },
-
-    getRole: async function (id: number, userId: number) {
-        const membership = await db.query.workspaceMembers.findFirst({
-            where: (wm, { eq, and }) => and(eq(wm.userId, userId), eq(wm.workspaceId, id))
-        });
-
-        if (!membership) return "unknown";
-        return membership.role;
     }
 };

@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { isAuthed } from "../middleware/isAuthed";
 import { publicProcedure, router } from "../trpc";
 import { WorkspaceLib } from "@/lib/workspace";
+import { MembershipLib } from "@/lib/membership";
 
 export const workspaceRouter = router({
     create: publicProcedure
@@ -16,7 +17,7 @@ export const workspaceRouter = router({
         .use(isAuthed)
         .input(z.object({ id: z.number(), name: z.string().min(1) }))
         .mutation(async ({ ctx, input }) => {
-            const role = await WorkspaceLib.getRole(input.id, ctx.user.id);
+            const role = await MembershipLib.getRole(input.id, ctx.user.id);
 
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
@@ -28,7 +29,7 @@ export const workspaceRouter = router({
         .use(isAuthed)
         .input(z.object({ id: z.number() }))
         .mutation(async ({ ctx, input }) => {
-            const role = await WorkspaceLib.getRole(input.id, ctx.user.id);
+            const role = await MembershipLib.getRole(input.id, ctx.user.id);
 
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner") throw new TRPCError({ code: "FORBIDDEN" });
@@ -40,7 +41,7 @@ export const workspaceRouter = router({
         .use(isAuthed)
         .input(z.object({ id: z.number() }))
         .query(async ({ ctx, input }) => {
-            const role = await WorkspaceLib.getRole(input.id, ctx.user.id);
+            const role = await MembershipLib.getRole(input.id, ctx.user.id);
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
 
             return await WorkspaceLib.getById(input.id);

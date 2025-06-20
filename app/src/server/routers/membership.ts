@@ -1,10 +1,8 @@
-import { db } from "@/db";
-import { workspaceMembers } from "@/db/schema";
-import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
 import z from "zod";
+import { TRPCError } from "@trpc/server";
 import { isAuthed } from "../middleware/isAuthed";
 import { publicProcedure, router } from "../trpc";
+import { MembershipLib } from "@/lib/membership";
 
 export const membershipRouter = router({
     add: publicProcedure
@@ -16,33 +14,15 @@ export const membershipRouter = router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const workspaceUser = await db.query.workspaceMembers.findFirst({
-                where: (m, { eq, and }) =>
-                    and(eq(m.userId, ctx.user.id), eq(m.workspaceId, input.workspaceId))
-            });
+            const role = await MembershipLib.getRole(input.workspaceId, ctx.user.id);
 
-            if (!workspaceUser) {
-                throw new TRPCError({ code: "FORBIDDEN" });
-            }
+            if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
+            if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
-            if (workspaceUser.role !== "owner" && workspaceUser.role !== "admin") {
-                throw new TRPCError({ code: "FORBIDDEN" });
-            }
+            const existing = await MembershipLib.getRole(input.workspaceId, input.userId);
+            if (existing !== "unknown") throw new TRPCError({ code: "CONFLICT" });
 
-            const existing = await db.query.workspaceMembers.findFirst({
-                where: (m, { eq, and }) =>
-                    and(eq(m.userId, input.userId), eq(m.workspaceId, input.workspaceId))
-            });
-
-            if (existing) {
-                throw new TRPCError({ code: "CONFLICT" });
-            }
-
-            await db.insert(workspaceMembers).values({
-                userId: input.userId,
-                workspaceId: input.workspaceId,
-                role: "member"
-            });
+            MembershipLib.add(input.workspaceId, input.userId);
         }),
 
     update: publicProcedure
@@ -51,36 +31,20 @@ export const membershipRouter = router({
             z.object({
                 workspaceId: z.number(),
                 userId: z.number(),
-                role: z.enum(["owner", "admin", "member"])
+                role: z.enum(["admin", "member"])
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const workspaceUser = await db.query.workspaceMembers.findFirst({
-                where: (m, { eq, and }) =>
-                    and(eq(m.userId, ctx.user.id), eq(m.workspaceId, input.workspaceId))
-            });
+            const role = await MembershipLib.getRole(input.workspaceId, ctx.user.id);
 
-            if (!workspaceUser) {
-                throw new TRPCError({ code: "FORBIDDEN" });
-            }
+            if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
+            if (role !== "owner") throw new TRPCError({ code: "FORBIDDEN" });
+            if (ctx.user.id === input.userId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-            if (workspaceUser.role !== "owner") {
-                throw new TRPCError({ code: "FORBIDDEN" });
-            }
+            const existing = await MembershipLib.getRole(input.workspaceId, input.userId);
+            if (existing === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
 
-            if (ctx.user.id === input.userId) {
-                throw new TRPCError({ code: "BAD_REQUEST" });
-            }
-
-            await db
-                .update(workspaceMembers)
-                .set({ role: input.role })
-                .where(
-                    and(
-                        eq(workspaceMembers.userId, input.userId),
-                        eq(workspaceMembers.workspaceId, input.workspaceId)
-                    )
-                );
+            MembershipLib.update(input.workspaceId, input.userId, input.role);
         }),
 
     remove: publicProcedure
@@ -92,43 +56,15 @@ export const membershipRouter = router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const workspaceUser = await db.query.workspaceMembers.findFirst({
-                where: (m, { eq, and }) =>
-                    and(eq(m.userId, ctx.user.id), eq(m.workspaceId, input.workspaceId))
-            });
+            const role = await MembershipLib.getRole(input.workspaceId, ctx.user.id);
 
-            if (!workspaceUser) {
-                throw new TRPCError({ code: "FORBIDDEN" });
-            }
+            if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
+            if (role !== "owner") throw new TRPCError({ code: "FORBIDDEN" });
+            if (ctx.user.id === input.userId) throw new TRPCError({ code: "BAD_REQUEST" });
 
-            const targetUser = await db.query.workspaceMembers.findFirst({
-                where: (m, { eq, and }) =>
-                    and(eq(m.userId, input.userId), eq(m.workspaceId, input.workspaceId))
-            });
+            const existing = await MembershipLib.getRole(input.workspaceId, input.userId);
+            if (existing === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
 
-            if (!targetUser) {
-                throw new TRPCError({ code: "NOT_FOUND" });
-            }
-
-            if (workspaceUser.role === "owner") {
-                if (input.userId === ctx.user.id) {
-                    throw new TRPCError({ code: "BAD_REQUEST" });
-                }
-            } else if (workspaceUser.role === "admin") {
-                if (targetUser.role !== "member") {
-                    throw new TRPCError({ code: "FORBIDDEN" });
-                }
-            } else {
-                throw new TRPCError({ code: "FORBIDDEN" });
-            }
-
-            await db
-                .delete(workspaceMembers)
-                .where(
-                    and(
-                        eq(workspaceMembers.userId, input.userId),
-                        eq(workspaceMembers.workspaceId, input.workspaceId)
-                    )
-                );
+            MembershipLib.remove(input.workspaceId, input.userId);
         })
 });
