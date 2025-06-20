@@ -17,7 +17,7 @@ export const boardRouter = router({
         )
         .mutation(async ({ ctx, input }) => {
             const role = await MembershipLib.getRole(input.workspaceId, ctx.user.id);
-            
+
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
@@ -26,21 +26,23 @@ export const boardRouter = router({
 
     edit: publicProcedure
         .use(isAuthed)
-        .input(z.object({
-            id: z.number(),
-            name: z.string().min(1),
-            backgroundId: z.number()
-        }))
+        .input(
+            z.object({
+                id: z.number(),
+                name: z.string().min(1),
+                backgroundId: z.number()
+            })
+        )
         .mutation(async ({ ctx, input }) => {
             const board = await BoardLib.getById(input.id);
             if (!board) throw new TRPCError({ code: "NOT_FOUND" });
 
             const role = await MembershipLib.getRole(board.workspaceId, ctx.user.id);
-            
+
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
-            BoardLib.update(input.id, input.name, input.backgroundId, ctx.user.id)
+            BoardLib.update(input.id, input.name, input.backgroundId, ctx.user.id);
         }),
 
     delete: publicProcedure
@@ -51,7 +53,7 @@ export const boardRouter = router({
             if (!board) throw new TRPCError({ code: "NOT_FOUND" });
 
             const role = await MembershipLib.getRole(board.workspaceId, ctx.user.id);
-            
+
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
@@ -82,5 +84,5 @@ export const boardRouter = router({
             if (!boards) throw new TRPCError({ code: "NOT_FOUND" });
 
             return boards;
-        }),
+        })
 });

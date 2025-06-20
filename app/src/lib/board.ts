@@ -3,7 +3,12 @@ import { boards, activities } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const BoardLib = {
-    create: async function(workspaceId: number, name: string, backgroundId: number, userId: number) {
+    create: async function (
+        workspaceId: number,
+        name: string,
+        backgroundId: number,
+        userId: number
+    ) {
         const [board] = await db
             .insert(boards)
             .values({
@@ -25,11 +30,15 @@ export const BoardLib = {
         return board;
     },
 
-    update: async function(boardId: number, name: string, backgroundId: number, userId: number) {
-        const [board] = await db.update(boards).set({
-            name: name,
-            backgroundId: backgroundId
-        }).where(eq(boards.id, boardId)).returning();
+    update: async function (boardId: number, name: string, backgroundId: number, userId: number) {
+        const [board] = await db
+            .update(boards)
+            .set({
+                name: name,
+                backgroundId: backgroundId
+            })
+            .where(eq(boards.id, boardId))
+            .returning();
 
         await db.insert(activities).values({
             workspaceId: board.workspaceId,
@@ -40,8 +49,8 @@ export const BoardLib = {
             action: "update"
         });
     },
-    
-    delete: async function(boardId: number, userId: number) {
+
+    delete: async function (boardId: number, userId: number) {
         const [board] = await db.delete(boards).where(eq(boards.id, boardId)).returning();
 
         await db.insert(activities).values({
@@ -53,8 +62,8 @@ export const BoardLib = {
             action: "delete"
         });
     },
-    
-    getById: async function(boardId: number) {
+
+    getById: async function (boardId: number) {
         return await db
             .select({
                 id: boards.id,
@@ -67,8 +76,8 @@ export const BoardLib = {
             .where(eq(boards.id, boardId))
             .then((rows) => rows[0]);
     },
-    
-    getAll: async function(workspaceId: number) {
+
+    getAll: async function (workspaceId: number) {
         return await db
             .select({
                 id: boards.id,
@@ -78,5 +87,5 @@ export const BoardLib = {
             })
             .from(boards)
             .where(eq(boards.workspaceId, workspaceId));
-    },
+    }
 };
