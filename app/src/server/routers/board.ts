@@ -21,7 +21,7 @@ export const boardRouter = router({
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
-            BoardLib.create(input.workspaceId, input.name, input.backgroundId, ctx.user.id);
+            await BoardLib.create(input.workspaceId, input.name, input.backgroundId, ctx.user.id);
         }),
 
     edit: publicProcedure
@@ -42,7 +42,7 @@ export const boardRouter = router({
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
-            BoardLib.update(input.id, input.name, input.backgroundId, ctx.user.id);
+            await BoardLib.update(input.id, input.name, input.backgroundId, ctx.user.id);
         }),
 
     delete: publicProcedure
@@ -57,7 +57,7 @@ export const boardRouter = router({
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner" && role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
 
-            BoardLib.delete(input.id, ctx.user.id);
+            await BoardLib.delete(input.id, ctx.user.id);
         }),
 
     getById: publicProcedure

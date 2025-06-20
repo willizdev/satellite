@@ -22,7 +22,7 @@ export const membershipRouter = router({
             const existing = await MembershipLib.getRole(input.workspaceId, input.userId);
             if (existing !== "unknown") throw new TRPCError({ code: "CONFLICT" });
 
-            MembershipLib.add(input.workspaceId, input.userId);
+            await MembershipLib.add(input.workspaceId, input.userId);
         }),
 
     update: publicProcedure
@@ -44,7 +44,7 @@ export const membershipRouter = router({
             const existing = await MembershipLib.getRole(input.workspaceId, input.userId);
             if (existing === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
 
-            MembershipLib.update(input.workspaceId, input.userId, input.role);
+            await MembershipLib.update(input.workspaceId, input.userId, input.role);
         }),
 
     remove: publicProcedure
@@ -65,6 +65,6 @@ export const membershipRouter = router({
             const existing = await MembershipLib.getRole(input.workspaceId, input.userId);
             if (existing === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
 
-            MembershipLib.remove(input.workspaceId, input.userId);
+            await MembershipLib.remove(input.workspaceId, input.userId);
         })
 });
