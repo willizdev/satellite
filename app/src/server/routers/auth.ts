@@ -22,7 +22,7 @@ export const authRouter = router({
             }
 
             const user = await AuthLib.userByEmail(input.email);
-            if (!user) {
+            if (user) {
                 throw new Error("User already exists");
             }
 
