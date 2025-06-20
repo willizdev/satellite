@@ -43,26 +43,8 @@ export const WorkspaceLib = {
         });
     },
 
-    delete: async function (id: number, userId: number) {
-        const now = new Date();
-
-        const workspace = await db
-            .select({ name: workspaces.name })
-            .from(workspaces)
-            .where(eq(workspaces.id, id))
-            .then((rows) => rows[0]);
-
+    delete: async function (id: number) {
         await db.delete(workspaces).where(eq(workspaces.id, id));
-
-        await db.insert(activities).values({
-            workspaceId: id,
-            userId: userId,
-            entityId: id,
-            entityName: workspace.name,
-            entityType: "workspace",
-            action: "delete",
-            time: now
-        });
     },
 
     getById: async function (id: number) {

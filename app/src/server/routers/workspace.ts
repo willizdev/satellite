@@ -34,10 +34,10 @@ export const workspaceRouter = router({
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
             if (role !== "owner") throw new TRPCError({ code: "FORBIDDEN" });
 
-            await WorkspaceLib.delete(input.id, ctx.user.id);
+            await WorkspaceLib.delete(input.id);
         }),
 
-    get: publicProcedure
+    getById: publicProcedure
         .use(isAuthed)
         .input(z.object({ id: z.number() }))
         .query(async ({ ctx, input }) => {
