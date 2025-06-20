@@ -56,7 +56,6 @@ export const boards = pgTable("boards", {
 export const lists = pgTable("lists", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    order: integer("order").notNull(),
     boardId: integer("board_id")
         .notNull()
         .references(() => boards.id, { onDelete: "cascade" })
@@ -65,7 +64,6 @@ export const lists = pgTable("lists", {
 export const cards = pgTable("cards", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    order: integer("order").notNull(),
     description: text("description"),
     done: boolean("done").default(false).notNull(),
     listId: integer("list_id")
