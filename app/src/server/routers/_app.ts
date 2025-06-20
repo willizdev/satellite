@@ -5,6 +5,8 @@ import { workspaceRouter } from "./workspace";
 import { membershipRouter } from "./membership";
 import { activityRouter } from "./activity";
 import { boardRouter } from "./board";
+import { listRouter } from "./list";
+import { cardRouter } from "./card";
 
 export const appRouter = router({
     auth: authRouter,
@@ -12,7 +14,9 @@ export const appRouter = router({
     workspace: workspaceRouter,
     membership: membershipRouter,
     activity: activityRouter,
-    board: boardRouter
+    board: boardRouter,
+    list: listRouter,
+    card: cardRouter
 });
 
 export type AppRouter = typeof appRouter;
