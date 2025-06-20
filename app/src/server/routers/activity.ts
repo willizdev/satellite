@@ -1,9 +1,9 @@
-import z from "zod";
-import { TRPCError } from "@trpc/server";
-import { isAuthed } from "../middleware/isAuthed";
-import { publicProcedure, router } from "../trpc";
 import { ActivityLib } from "@/lib/activity";
 import { MembershipLib } from "@/lib/membership";
+import { TRPCError } from "@trpc/server";
+import z from "zod";
+import { isAuthed } from "../middleware/isAuthed";
+import { publicProcedure, router } from "../trpc";
 
 export const activityRouter = router({
     allActivities: publicProcedure

@@ -1,8 +1,8 @@
-import z from "zod";
+import { MembershipLib } from "@/lib/membership";
 import { TRPCError } from "@trpc/server";
+import z from "zod";
 import { isAuthed } from "../middleware/isAuthed";
 import { publicProcedure, router } from "../trpc";
-import { MembershipLib } from "@/lib/membership";
 
 export const membershipRouter = router({
     add: publicProcedure

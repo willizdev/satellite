@@ -1,16 +1,16 @@
-import z from "zod";
+import { MembershipLib } from "@/lib/membership";
+import { WorkspaceLib } from "@/lib/workspace";
 import { TRPCError } from "@trpc/server";
+import z from "zod";
 import { isAuthed } from "../middleware/isAuthed";
 import { publicProcedure, router } from "../trpc";
-import { WorkspaceLib } from "@/lib/workspace";
-import { MembershipLib } from "@/lib/membership";
 
 export const workspaceRouter = router({
     create: publicProcedure
         .use(isAuthed)
         .input(z.object({ name: z.string().min(1) }))
         .mutation(async ({ ctx, input }) => {
-            return await WorkspaceLib.create(input.name, ctx.user.id);
+            await WorkspaceLib.create(input.name, ctx.user.id);
         }),
 
     update: publicProcedure

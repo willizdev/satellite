@@ -1,6 +1,6 @@
+import { UserLib } from "@/lib/user";
 import bcrypt from "bcrypt";
 import { z } from "zod";
-import { AuthLib } from "@/lib/auth";
 import { publicProcedure, router } from "../trpc";
 
 export const authRouter = router({
@@ -21,12 +21,12 @@ export const authRouter = router({
                 throw new Error("Signup is not allowed");
             }
 
-            const user = await AuthLib.userByEmail(input.email);
+            const user = await UserLib.getByEmail(input.email);
             if (user) {
                 throw new Error("User already exists");
             }
 
-            const token = await AuthLib.userCreate(input.name, input.email, input.password);
+            const token = await UserLib.create(input.name, input.email, input.password);
 
             ctx.cookieStore.set("token", token, {
                 httpOnly: true,
@@ -42,7 +42,7 @@ export const authRouter = router({
             })
         )
         .mutation(async ({ input, ctx }) => {
-            const user = await AuthLib.userByEmail(input.email);
+            const user = await UserLib.getByEmail(input.email);
             if (!user) {
                 throw new Error("Invalid credentials");
             }

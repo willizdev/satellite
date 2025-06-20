@@ -1,9 +1,9 @@
 import { db } from "@/db";
-import { cards, activities } from "@/db/schema";
+import { activities, cards } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const CardLib = {
-    create: async function (userId: number, workspaceId: number, listId: number, name: string) {
+    create: async (userId: number, workspaceId: number, listId: number, name: string) => {
         const [card] = await db.insert(cards).values({ listId, name }).returning();
 
         await db.insert(activities).values({
@@ -18,13 +18,13 @@ export const CardLib = {
         return card;
     },
 
-    update: async function (
+    update: async (
         userId: number,
         workspaceId: number,
         cardId: number,
         name: string,
         description: string | undefined
-    ) {
+    ) => {
         await db.update(cards).set({ name, description }).where(eq(cards.id, cardId));
 
         await db.insert(activities).values({
@@ -37,7 +37,7 @@ export const CardLib = {
         });
     },
 
-    delete: async function (userId: number, workspaceId: number, cardId: number) {
+    delete: async (userId: number, workspaceId: number, cardId: number) => {
         const [card] = await db.delete(cards).where(eq(cards.id, cardId)).returning();
 
         await db.insert(activities).values({
@@ -50,8 +50,8 @@ export const CardLib = {
         });
     },
 
-    getById: async function (cardId: number) {
-        return await db
+    getById: async (cardId: number) =>
+        await db
             .select({
                 id: cards.id,
                 name: cards.name,
@@ -61,11 +61,10 @@ export const CardLib = {
             })
             .from(cards)
             .where(eq(cards.id, cardId))
-            .then((rows) => rows[0]);
-    },
+            .then((rows) => rows[0]),
 
-    getAll: async function (listId: number) {
-        return await db
+    getAll: async (listId: number) =>
+        await db
             .select({
                 id: cards.id,
                 name: cards.name,
@@ -74,6 +73,5 @@ export const CardLib = {
                 listId: cards.listId
             })
             .from(cards)
-            .where(eq(cards.listId, listId));
-    }
+            .where(eq(cards.listId, listId))
 };

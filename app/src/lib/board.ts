@@ -1,14 +1,9 @@
 import { db } from "@/db";
-import { boards, activities } from "@/db/schema";
+import { activities, boards } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const BoardLib = {
-    create: async function (
-        workspaceId: number,
-        name: string,
-        backgroundId: number,
-        userId: number
-    ) {
+    create: async (workspaceId: number, name: string, backgroundId: number, userId: number) => {
         const [board] = await db
             .insert(boards)
             .values({
@@ -30,7 +25,7 @@ export const BoardLib = {
         return board;
     },
 
-    update: async function (boardId: number, name: string, backgroundId: number, userId: number) {
+    update: async (boardId: number, name: string, backgroundId: number, userId: number) => {
         const [board] = await db
             .update(boards)
             .set({
@@ -50,7 +45,7 @@ export const BoardLib = {
         });
     },
 
-    delete: async function (boardId: number, userId: number) {
+    delete: async (boardId: number, userId: number) => {
         const [board] = await db.delete(boards).where(eq(boards.id, boardId)).returning();
 
         await db.insert(activities).values({
@@ -63,8 +58,8 @@ export const BoardLib = {
         });
     },
 
-    getById: async function (boardId: number) {
-        return await db
+    getById: async (boardId: number) =>
+        await db
             .select({
                 id: boards.id,
                 name: boards.name,
@@ -74,11 +69,10 @@ export const BoardLib = {
             })
             .from(boards)
             .where(eq(boards.id, boardId))
-            .then((rows) => rows[0]);
-    },
+            .then((rows) => rows[0]),
 
-    getAll: async function (workspaceId: number) {
-        return await db
+    getAll: async (workspaceId: number) =>
+        await db
             .select({
                 id: boards.id,
                 name: boards.name,
@@ -86,6 +80,5 @@ export const BoardLib = {
                 workspaceId: boards.workspaceId
             })
             .from(boards)
-            .where(eq(boards.workspaceId, workspaceId));
-    }
+            .where(eq(boards.workspaceId, workspaceId))
 };

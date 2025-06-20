@@ -1,11 +1,11 @@
-import z from "zod";
+import { BoardLib } from "@/lib/board";
+import { CardLib } from "@/lib/card";
+import { ListLib } from "@/lib/list";
+import { MembershipLib } from "@/lib/membership";
 import { TRPCError } from "@trpc/server";
+import z from "zod";
 import { isAuthed } from "../middleware/isAuthed";
 import { publicProcedure, router } from "../trpc";
-import { CardLib } from "@/lib/card";
-import { MembershipLib } from "@/lib/membership";
-import { BoardLib } from "@/lib/board";
-import { ListLib } from "@/lib/list";
 
 export const cardRouter = router({
     create: publicProcedure
@@ -71,7 +71,7 @@ export const cardRouter = router({
     getById: publicProcedure
         .use(isAuthed)
         .input(z.object({ id: z.number() }))
-        .mutation(async ({ ctx, input }) => {
+        .query(async ({ ctx, input }) => {
             const card = await CardLib.getById(input.id);
             if (!card) throw new TRPCError({ code: "NOT_FOUND" });
 
@@ -90,7 +90,7 @@ export const cardRouter = router({
     getAll: publicProcedure
         .use(isAuthed)
         .input(z.object({ listId: z.number() }))
-        .mutation(async ({ ctx, input }) => {
+        .query(async ({ ctx, input }) => {
             const cards = await ListLib.getAll(input.listId);
             if (!cards) throw new TRPCError({ code: "NOT_FOUND" });
 

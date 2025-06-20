@@ -1,9 +1,9 @@
-import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { workspaces, workspaceMembers, activities } from "@/db/schema";
+import { activities, workspaceMembers, workspaces } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const WorkspaceLib = {
-    create: async function (name: string, userId: number) {
+    create: async (name: string, userId: number) => {
         const now = new Date();
 
         const [workspace] = await db.insert(workspaces).values({ name }).returning();
@@ -27,7 +27,7 @@ export const WorkspaceLib = {
         return workspace;
     },
 
-    update: async function (id: number, userId: number, name: string) {
+    update: async (id: number, userId: number, name: string) => {
         const now = new Date();
 
         await db.update(workspaces).set({ name, updatedAt: now }).where(eq(workspaces.id, id));
@@ -43,12 +43,12 @@ export const WorkspaceLib = {
         });
     },
 
-    delete: async function (id: number) {
+    delete: async (id: number) => {
         await db.delete(workspaces).where(eq(workspaces.id, id));
     },
 
-    getById: async function (id: number) {
-        return await db
+    getById: async (id: number) =>
+        await db
             .select({
                 id: workspaces.id,
                 name: workspaces.name,
@@ -57,11 +57,10 @@ export const WorkspaceLib = {
             })
             .from(workspaces)
             .where(eq(workspaces.id, id))
-            .then((rows) => rows[0]);
-    },
+            .then((rows) => rows[0]),
 
-    getAll: async function (userId: number) {
-        return await db
+    getAll: async (userId: number) =>
+        await db
             .select({
                 id: workspaces.id,
                 name: workspaces.name,
@@ -70,6 +69,5 @@ export const WorkspaceLib = {
             })
             .from(workspaceMembers)
             .innerJoin(workspaces, eq(workspaceMembers.workspaceId, workspaces.id))
-            .where(eq(workspaceMembers.userId, userId));
-    }
+            .where(eq(workspaceMembers.userId, userId))
 };

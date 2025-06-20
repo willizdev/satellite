@@ -1,9 +1,9 @@
 import { db } from "@/db";
-import { lists, activities } from "@/db/schema";
+import { activities, lists } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const ListLib = {
-    create: async function (userId: number, workspaceId: number, boardId: number, name: string) {
+    create: async (userId: number, workspaceId: number, boardId: number, name: string) => {
         const [list] = await db.insert(lists).values({ boardId, name }).returning();
 
         await db.insert(activities).values({
@@ -18,7 +18,7 @@ export const ListLib = {
         return list;
     },
 
-    update: async function (userId: number, workspaceId: number, listId: number, name: string) {
+    update: async (userId: number, workspaceId: number, listId: number, name: string) => {
         await db.update(lists).set({ name: name }).where(eq(lists.id, listId));
 
         await db.insert(activities).values({
@@ -31,7 +31,7 @@ export const ListLib = {
         });
     },
 
-    delete: async function (userId: number, workspaceId: number, listId: number) {
+    delete: async (userId: number, workspaceId: number, listId: number) => {
         const [list] = await db.delete(lists).where(eq(lists.id, listId)).returning();
 
         await db.insert(activities).values({
@@ -44,8 +44,8 @@ export const ListLib = {
         });
     },
 
-    getById: async function (listId: number) {
-        return await db
+    getById: async (listId: number) =>
+        await db
             .select({
                 id: lists.id,
                 name: lists.name,
@@ -53,17 +53,15 @@ export const ListLib = {
             })
             .from(lists)
             .where(eq(lists.id, listId))
-            .then((rows) => rows[0]);
-    },
+            .then((rows) => rows[0]),
 
-    getAll: async function (boardId: number) {
-        return await db
+    getAll: async (boardId: number) =>
+        await db
             .select({
                 id: lists.id,
                 name: lists.name,
                 boardId: lists.boardId
             })
             .from(lists)
-            .where(eq(lists.boardId, boardId));
-    }
+            .where(eq(lists.boardId, boardId))
 };

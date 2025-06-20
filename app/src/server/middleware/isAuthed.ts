@@ -1,6 +1,6 @@
+import { UserLib } from "@/lib/user";
 import { TRPCError } from "@trpc/server";
 import { middleware } from "../trpc";
-import { AuthLib } from "@/lib/auth";
 
 export const isAuthed = middleware(async (opts) => {
     const { ctx, next } = opts;
@@ -9,7 +9,7 @@ export const isAuthed = middleware(async (opts) => {
         throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    const user = await AuthLib.userByToken(ctx.token);
+    const user = await UserLib.getByToken(ctx.token);
 
     if (!user) {
         throw new TRPCError({ code: "UNAUTHORIZED" });

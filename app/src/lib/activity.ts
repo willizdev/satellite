@@ -3,8 +3,8 @@ import { activities, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 
 export const ActivityLib = {
-    getAll: async function (workspaceId: number) {
-        return await db
+    getAll: async (workspaceId: number) =>
+        await db
             .select({
                 id: activities.id,
                 time: activities.time,
@@ -18,11 +18,10 @@ export const ActivityLib = {
             .from(activities)
             .innerJoin(users, eq(activities.userId, users.id))
             .where(eq(activities.workspaceId, workspaceId))
-            .orderBy(activities.time);
-    },
+            .orderBy(activities.time),
 
-    getCardActivities: async function (workspaceId: number, cardId: number) {
-        return await db
+    getCardActivities: async (workspaceId: number, cardId: number) =>
+        await db
             .select({
                 id: activities.id,
                 time: activities.time,
@@ -42,6 +41,5 @@ export const ActivityLib = {
                     eq(activities.entityType, "card")
                 )
             )
-            .orderBy(activities.time);
-    }
+            .orderBy(activities.time)
 };

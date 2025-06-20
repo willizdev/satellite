@@ -1,9 +1,9 @@
+import { db } from "@/db";
 import { workspaceMembers } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { db } from "@/db";
 
 export const MembershipLib = {
-    getRole: async function (workspaceId: number, userId: number) {
+    getRole: async (workspaceId: number, userId: number) => {
         const membership = await db.query.workspaceMembers.findFirst({
             where: (wm, { eq, and }) => and(eq(wm.userId, userId), eq(wm.workspaceId, workspaceId))
         });
@@ -12,7 +12,7 @@ export const MembershipLib = {
         return membership.role;
     },
 
-    add: async function (workspaceId: number, userId: number) {
+    add: async (workspaceId: number, userId: number) => {
         await db.insert(workspaceMembers).values({
             userId: userId,
             workspaceId: workspaceId,
@@ -20,7 +20,7 @@ export const MembershipLib = {
         });
     },
 
-    update: async function (workspaceId: number, userId: number, role: "admin" | "member") {
+    update: async (workspaceId: number, userId: number, role: "admin" | "member") => {
         await db
             .update(workspaceMembers)
             .set({ role: role })
@@ -32,7 +32,7 @@ export const MembershipLib = {
             );
     },
 
-    remove: async function (workspaceId: number, userId: number) {
+    remove: async (workspaceId: number, userId: number) => {
         await db
             .delete(workspaceMembers)
             .where(

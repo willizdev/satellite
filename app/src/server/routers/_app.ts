@@ -1,12 +1,12 @@
 import { router } from "../trpc";
+import { activityRouter } from "./activity";
 import { authRouter } from "./auth";
+import { boardRouter } from "./board";
+import { cardRouter } from "./card";
+import { listRouter } from "./list";
+import { membershipRouter } from "./membership";
 import { userRouter } from "./user";
 import { workspaceRouter } from "./workspace";
-import { membershipRouter } from "./membership";
-import { activityRouter } from "./activity";
-import { boardRouter } from "./board";
-import { listRouter } from "./list";
-import { cardRouter } from "./card";
 
 export const appRouter = router({
     auth: authRouter,
