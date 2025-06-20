@@ -21,7 +21,7 @@ export const ActivityLib = {
             .orderBy(activities.time);
     },
 
-    getListActivities: async function (workspaceId: number, listId: number) {
+    getCardActivities: async function (workspaceId: number, cardId: number) {
         return await db
             .select({
                 id: activities.id,
@@ -38,8 +38,8 @@ export const ActivityLib = {
             .where(
                 and(
                     eq(activities.workspaceId, workspaceId),
-                    eq(activities.entityId, listId),
-                    eq(activities.entityType, "list")
+                    eq(activities.entityId, cardId),
+                    eq(activities.entityType, "card")
                 )
             )
             .orderBy(activities.time);

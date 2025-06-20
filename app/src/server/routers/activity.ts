@@ -20,18 +20,18 @@ export const activityRouter = router({
             return await ActivityLib.getAll(input.workspaceId);
         }),
 
-    listActivities: publicProcedure
+    cardActivities: publicProcedure
         .use(isAuthed)
         .input(
             z.object({
                 workspaceId: z.number(),
-                listId: z.number()
+                cardId: z.number()
             })
         )
         .query(async ({ ctx, input }) => {
             const role = await MembershipLib.getRole(input.workspaceId, ctx.user.id);
             if (role === "unknown") throw new TRPCError({ code: "NOT_FOUND" });
 
-            return await ActivityLib.getListActivities(input.workspaceId, input.listId);
+            return await ActivityLib.getCardActivities(input.workspaceId, input.cardId);
         })
 });
