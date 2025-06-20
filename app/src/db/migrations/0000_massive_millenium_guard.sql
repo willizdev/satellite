@@ -6,6 +6,7 @@ CREATE TABLE "activities" (
 	"time" timestamp DEFAULT now() NOT NULL,
 	"workspace_id" integer NOT NULL,
 	"user_id" integer NOT NULL,
+	"entity_id" integer NOT NULL,
 	"entity_name" text NOT NULL,
 	"entity_type" "activity_entity" NOT NULL,
 	"action" "activity_action" NOT NULL
@@ -15,12 +16,14 @@ CREATE TABLE "boards" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"background_id" integer NOT NULL,
-	"workspace_id" integer NOT NULL
+	"workspace_id" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "cards" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
+	"order" integer NOT NULL,
 	"description" text,
 	"done" boolean DEFAULT false NOT NULL,
 	"list_id" integer NOT NULL

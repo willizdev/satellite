@@ -49,7 +49,8 @@ export const boards = pgTable("boards", {
     backgroundId: integer("background_id").notNull(),
     workspaceId: integer("workspace_id")
         .notNull()
-        .references(() => workspaces.id, { onDelete: "cascade" })
+        .references(() => workspaces.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull()
 });
 
 export const lists = pgTable("lists", {
@@ -64,6 +65,7 @@ export const lists = pgTable("lists", {
 export const cards = pgTable("cards", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
+    order: integer("order").notNull(),
     description: text("description"),
     done: boolean("done").default(false).notNull(),
     listId: integer("list_id")
@@ -80,6 +82,7 @@ export const activities = pgTable("activities", {
     userId: integer("user_id")
         .notNull()
         .references(() => users.id, { onDelete: "cascade" }),
+    entityId: integer("entity_id").notNull(),
     entityName: text("entity_name").notNull(),
     entityType: activityEntityEnum("entity_type").notNull(),
     action: activityActionEnum("action").notNull()
